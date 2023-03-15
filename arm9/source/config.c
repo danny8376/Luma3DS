@@ -610,7 +610,7 @@ static char tmpIniBuffer[0x2000];
 
 static bool readLumaIniConfig(void)
 {
-    u32 rd = fileRead(tmpIniBuffer, "config.ini", sizeof(tmpIniBuffer) - 1);
+    u32 rd = fileRead(tmpIniBuffer, "config.exploit-dev.ini", sizeof(tmpIniBuffer) - 1);
     if (rd == 0) return false;
 
     tmpIniBuffer[rd] = '\0';
@@ -621,7 +621,7 @@ static bool readLumaIniConfig(void)
 static bool writeLumaIniConfig(void)
 {
     size_t n = saveLumaIniConfigToStr(tmpIniBuffer);
-    return n != 0 && fileWrite(tmpIniBuffer, "config.ini", n);
+    return n != 0 && fileWrite(tmpIniBuffer, "config.exploit-dev.ini", n);
 }
 
 // ===========================================================
