@@ -608,31 +608,25 @@ static size_t saveLumaIniConfigToStr(char *out)
 }
 
 static char tmpIniBuffer[0x2000];
-*/
 
 static bool readLumaIniConfig(void)
 {
-    return false;
-
-    /*
     u32 rd = fileRead(tmpIniBuffer, "config.ini", sizeof(tmpIniBuffer) - 1);
     if (rd == 0) return false;
 
     tmpIniBuffer[rd] = '\0';
 
     return ini_parse_string(tmpIniBuffer, &configIniHandler, &configData) >= 0 && !hasIniParseError;
-    */
 }
 
 static bool writeLumaIniConfig(void)
 {
     return true;
 
-    /*
     size_t n = saveLumaIniConfigToStr(tmpIniBuffer);
     return n != 0 && fileWrite(tmpIniBuffer, "config.ini", n);
-    */
 }
+*/
 
 // ===========================================================
 
@@ -699,14 +693,16 @@ static bool readConfigMcu(void)
 
 bool readConfig(void)
 {
-    bool retMcu, ret;
+    //bool retMcu, ret;
 
-    retMcu = readConfigMcu();
+    /*retMcu = */readConfigMcu();
+    /*
     ret = readLumaIniConfig();
     if(!retMcu || !ret ||
        configData.formatVersionMajor != CONFIG_VERSIONMAJOR ||
        configData.formatVersionMinor != CONFIG_VERSIONMINOR)
     {
+    */
         memset(&configData, 0, sizeof(CfgData));
         configData.formatVersionMajor = CONFIG_VERSIONMAJOR;
         configData.formatVersionMinor = CONFIG_VERSIONMINOR;
@@ -719,38 +715,40 @@ bool readConfig(void)
         configData.topScreenFilter.contrastEnc = 1 * FLOAT_CONV_MULT; // 1.0f
         configData.bottomScreenFilter = configData.topScreenFilter;
         configData.autobootTwlTitleId = AUTOBOOT_DEFAULT_TWL_TID;
+    /*
         ret = false;
     }
     else
         ret = true;
+    */
 
     configData.bootConfig = configDataMcu.bootCfg;
     oldConfig = configData;
 
-    return ret;
+    return true;//ret;
 }
 
 void writeConfig(bool isConfigOptions)
 {
-    bool updateMcu, updateIni;
+    bool updateMcu;//, updateIni;
 
     if (needConfig == CREATE_CONFIGURATION)
     {
         updateMcu = !isConfigOptions; // We've already committed it once (if it wasn't initialized)
-        updateIni = isConfigOptions;
+        //updateIni = isConfigOptions;
         needConfig = MODIFY_CONFIGURATION;
     }
     else
     {
         updateMcu = !isConfigOptions && configData.bootConfig != oldConfig.bootConfig;
-        updateIni = isConfigOptions && (configData.config != oldConfig.config || configData.multiConfig != oldConfig.multiConfig);
+        //updateIni = isConfigOptions && (configData.config != oldConfig.config || configData.multiConfig != oldConfig.multiConfig);
     }
 
     if (updateMcu)
         writeConfigMcu();
 
-    if(updateIni && !writeLumaIniConfig())
-        error("Error writing the configuration file");
+    //if(updateIni && !writeLumaIniConfig())
+    //    error("Error writing the configuration file");
 }
 
 void configMenu(bool oldPinStatus, u32 oldPinMode)
