@@ -176,6 +176,9 @@ static size_t LumaConfig_SaveLumaIniConfigToStr(char *out, const CfgData *cfg)
 
 Result LumaConfig_SaveSettings(void)
 {
+    return 0;
+
+    /*
     char inibuf[0x2000];
 
     Result res;
@@ -242,4 +245,5 @@ Result LumaConfig_SaveSettings(void)
     IFile_Close(&file);
 
     return res;
+    */
 }

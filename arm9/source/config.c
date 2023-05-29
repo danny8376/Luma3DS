@@ -57,6 +57,7 @@ static_assert(sizeof(CfgDataMcu) > 0, "wrong data size");
 // INI parsing
 // ===========================================================
 
+/*
 static const char *singleOptionIniNamesBoot[] = {
     "autoboot_emunand",
     "use_emunand_firm_if_r_pressed",
@@ -607,21 +608,30 @@ static size_t saveLumaIniConfigToStr(char *out)
 }
 
 static char tmpIniBuffer[0x2000];
+*/
 
 static bool readLumaIniConfig(void)
 {
+    return false;
+
+    /*
     u32 rd = fileRead(tmpIniBuffer, "config.ini", sizeof(tmpIniBuffer) - 1);
     if (rd == 0) return false;
 
     tmpIniBuffer[rd] = '\0';
 
     return ini_parse_string(tmpIniBuffer, &configIniHandler, &configData) >= 0 && !hasIniParseError;
+    */
 }
 
 static bool writeLumaIniConfig(void)
 {
+    return true;
+
+    /*
     size_t n = saveLumaIniConfigToStr(tmpIniBuffer);
     return n != 0 && fileWrite(tmpIniBuffer, "config.ini", n);
+    */
 }
 
 // ===========================================================
