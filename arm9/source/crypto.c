@@ -33,7 +33,6 @@
 
 #include "crypto.h"
 #include "memory.h"
-#include "emunand.h"
 #include "utils.h"
 #include "alignedseqmemcpy.h"
 #include "strings.h"
@@ -348,7 +347,7 @@ int ctrNandInit(void)
     u8 __attribute__((aligned(4))) temp[0x200];
 
     //Read NCSD header
-    result = firmSource == FIRMWARE_SYSNAND ? sdmmc_nand_readsectors(0, 1, temp) : sdmmc_sdcard_readsectors(emuOffset + emuHeader, 1, temp);
+    result = sdmmc_nand_readsectors(0, 1, temp);
 
     if(!result)
     {
@@ -375,13 +374,15 @@ int ctrNandRead(u32 sector, u32 sectorCount, u8 *outbuf)
 
     //Read
     int result;
-    if(firmSource == FIRMWARE_SYSNAND)
+    //if(firmSource == FIRMWARE_SYSNAND)
         result = sdmmc_nand_readsectors(sector + fatStart, sectorCount, outbuf);
+    /*
     else
     {
         sector += emuOffset;
         result = sdmmc_sdcard_readsectors(sector + fatStart, sectorCount, outbuf);
     }
+    */
 
     //Decrypt
     aes_use_keyslot(nandSlot);

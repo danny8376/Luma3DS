@@ -32,7 +32,6 @@
 #include "patches.h"
 #include "memory.h"
 #include "cache.h"
-#include "emunand.h"
 #include "crypto.h"
 #include "screen.h"
 #include "fmt.h"
@@ -151,7 +150,7 @@ static inline u32 loadFirmFromStorage(FirmwareType firmType)
 
 u32 loadNintendoFirm(FirmwareType *firmType, FirmwareSource nandType, bool loadFromStorage, bool isSafeMode)
 {
-    u32 firmVersion,
+    u32 firmVersion = 0xFFFFFFFF,
         firmSize;
 
     bool ctrNandError = isSdMode && !mountFs(false, false);
@@ -392,10 +391,11 @@ u32 patchNativeFirm(u32 firmVersion, FirmwareSource nandType, bool loadFromStora
     ret += patchSignatureChecks(process9Offset, process9Size);
 
     //Apply EmuNAND patches
-    if(nandType != FIRMWARE_SYSNAND) ret += patchEmuNand(arm9Section, kernel9Size, process9Offset, process9Size, firm->section[2].address, firmVersion);
+    (void) nandType;
+    //if(nandType != FIRMWARE_SYSNAND) ret += patchEmuNand(arm9Section, kernel9Size, process9Offset, process9Size, firm->section[2].address, firmVersion);
 
     //Apply FIRM0/1 writes patches on SysNAND to protect A9LH
-    else if(isFirmProtEnabled) ret += patchFirmWrites(process9Offset, process9Size);
+    if(isFirmProtEnabled) ret += patchFirmWrites(process9Offset, process9Size);
 
 #ifndef BUILD_FOR_EXPLOIT_DEV
     //Apply firmlaunch patches
@@ -423,9 +423,11 @@ u32 patchNativeFirm(u32 firmVersion, FirmwareSource nandType, bool loadFromStora
     }
 
     //Arm9 exception handlers
+    /*
     ret += patchArm9ExceptionHandlersInstall(arm9Section, kernel9Size);
     ret += patchSvcBreak9(arm9Section, kernel9Size, (u32)firm->section[2].address);
     ret += patchKernel9Panic(arm9Section, kernel9Size);
+    */
 
     ret += patchP9AccessChecks(process9Offset, process9Size);
 
@@ -536,8 +538,10 @@ u32 patch1x2xNativeAndSafeFirm(void)
     ret += ISN3DS ? patchSignatureChecks(process9Offset, process9Size) : patchOldSignatureChecks(process9Offset, process9Size);
 
     //Arm9 exception handlers
+    /*
     ret += patchArm9ExceptionHandlersInstall(arm9Section, kernel9Size);
     ret += patchSvcBreak9(arm9Section, kernel9Size, (u32)firm->section[2].address);
+    */
 
     //Apply firmlaunch patches
     //Doesn't work here if Luma is on SD. If you want to use SAFE_FIRM on 1.0, use Luma from NAND & uncomment this line:

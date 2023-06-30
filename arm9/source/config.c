@@ -34,7 +34,6 @@
 #include "utils.h"
 #include "screen.h"
 #include "draw.h"
-#include "emunand.h"
 #include "buttons.h"
 #include "pin.h"
 #include "i2c.h"
@@ -706,7 +705,7 @@ bool readConfig(void)
         memset(&configData, 0, sizeof(CfgData));
         configData.formatVersionMajor = CONFIG_VERSIONMAJOR;
         configData.formatVersionMinor = CONFIG_VERSIONMINOR;
-        configData.config |= 1u << PATCHVERSTRING;
+        //configData.config |= 1u << PATCHVERSTRING;
         configData.splashDurationMsec = 3000;
         configData.hbldr3dsxTitleId = HBLDR_DEFAULT_3DSX_TID;
         configData.rosalinaMenuCombo = 1u << 9 | 1u << 7 | 1u << 2; // L+Start+Select
@@ -879,11 +878,13 @@ void configMenu(bool oldPinStatus, u32 oldPinMode)
                                                };
 
     FirmwareSource nandType = FIRMWARE_SYSNAND;
+    /*
     if(isSdMode)
     {
         nandType = FIRMWARE_EMUNAND;
         locateEmuNand(&nandType);
     }
+    */
 
     struct multiOption {
         u32 posXs[4];

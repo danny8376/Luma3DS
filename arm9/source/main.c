@@ -25,7 +25,6 @@
 */
 
 #include "config.h"
-#include "emunand.h"
 #include "fs.h"
 #include "firm.h"
 #include "utils.h"
@@ -141,12 +140,12 @@ void main(int argc, char **argv, u32 magicWord)
 
     if(isInvalidLoader) error("Launched using an unsupported loader.");
 
-    installArm9Handlers();
+    //installArm9Handlers();
 
     if(memcmp(launchedPath, u"sdmc", 8) == 0)
     {
         if(!mountFs(true, false)) error("Failed to mount SD.");
-        isSdMode = true;
+        isSdMode = false;
     }
     else if(memcmp(launchedPath, u"nand", 8) == 0)
     {
@@ -155,7 +154,7 @@ void main(int argc, char **argv, u32 magicWord)
     }
     else if(bootType == NTR || memcmp(launchedPath, u"firm", 8) == 0)
     {
-        if(mountFs(true, false)) isSdMode = true;
+        if(mountFs(true, false)) isSdMode = false;
         else if(mountFs(false, true)) isSdMode = false;
         else error("Failed to mount SD and CTRNAND.");
 
@@ -178,7 +177,7 @@ void main(int argc, char **argv, u32 magicWord)
         error("Launched from an unsupported location: %s.", mountPoint);
     }
 
-    detectAndProcessExceptionDumps();
+    //detectAndProcessExceptionDumps();
 
     //Attempt to read the configuration file
     needConfig = readConfig() ? MODIFY_CONFIGURATION : CREATE_CONFIGURATION;
@@ -212,7 +211,7 @@ void main(int argc, char **argv, u32 magicWord)
     isFirmProtEnabled = bootType != NTR;
 
     //Get pressed buttons
-    u32 pressed = HID_PAD;
+    u32 pressed = 0;//HID_PAD;
 
     //If it's a MCU reboot, try to force boot options
     if(CFG_BOOTENV && needConfig != CREATE_CONFIGURATION)
@@ -253,12 +252,15 @@ void main(int argc, char **argv, u32 magicWord)
         }
     }
 
+    /*
     u32 pinMode = MULTICONFIG(PIN);
     bool shouldLoadConfigMenu = needConfig == CREATE_CONFIGURATION || ((pressed & (BUTTON_SELECT | BUTTON_L1)) == BUTTON_SELECT);
     bool pinExists = pinMode != 0 && verifyPin(pinMode);
+    */
 
     /* If the PIN has been verified, wait to make it easier to press the SAFE_MODE combo or the configuration menu button
        (if not already pressed, for the latter) */
+    /*
     if(pinExists && !shouldLoadConfigMenu)
     {
         while(HID_PAD & PIN_BUTTONS);
@@ -276,6 +278,7 @@ void main(int argc, char **argv, u32 magicWord)
         //Update pressed buttons
         pressed = HID_PAD;
     }
+    */
 
     if(!CFG_BOOTENV && pressed == SAFE_MODE)
     {
@@ -288,12 +291,15 @@ void main(int argc, char **argv, u32 magicWord)
         goto boot;
     }
 
+    /*
     u32 splashMode = MULTICONFIG(SPLASH);
 
     if(splashMode == 1 && loadSplash()) pressed = HID_PAD;
+    */
 
-    bool autoBootEmu = CONFIG(AUTOBOOTEMU);
+    //bool autoBootEmu = CONFIG(AUTOBOOTEMU);
 
+    /*
     if((pressed & (BUTTON_START | BUTTON_L1)) == BUTTON_START)
     {
         loadHomebrewFirm(0);
@@ -319,11 +325,13 @@ void main(int argc, char **argv, u32 magicWord)
     // Set-up autoboot
     if (MULTICONFIG(AUTOBOOTMODE) != 0)
         configureHomebrewAutoboot();
+    */
 
     //If booting from CTRNAND, always use SysNAND
-    if(!isSdMode) nandType = FIRMWARE_SYSNAND;
+    /*if(!isSdMode)*/ nandType = FIRMWARE_SYSNAND;
 
     //If R is pressed, boot the non-updated NAND with the FIRM of the opposite one
+    /*
     else if(pressed & BUTTON_R1)
     {
         if(CONFIG(USEEMUFIRM))
@@ -337,12 +345,14 @@ void main(int argc, char **argv, u32 magicWord)
             firmSource = FIRMWARE_SYSNAND;
         }
     }
+    */
 
     /* Else, boot the NAND the user set to autoboot or the opposite one, depending on L,
        with their own FIRM */
-    else firmSource = nandType = (autoBootEmu == ((pressed & BUTTON_L1) == BUTTON_L1)) ? FIRMWARE_SYSNAND : FIRMWARE_EMUNAND;
+    //else firmSource = nandType = (autoBootEmu == ((pressed & BUTTON_L1) == BUTTON_L1)) ? FIRMWARE_SYSNAND : FIRMWARE_EMUNAND;
 
     //If we're booting EmuNAND or using EmuNAND FIRM, determine which one from the directional pad buttons, or otherwise from the config
+    /*
     if(nandType == FIRMWARE_EMUNAND || firmSource == FIRMWARE_EMUNAND)
     {
         FirmwareSource tempNand;
@@ -368,10 +378,12 @@ void main(int argc, char **argv, u32 magicWord)
         if(nandType == FIRMWARE_EMUNAND) nandType = tempNand;
         else firmSource = tempNand;
     }
+    */
 
 boot:
 
     //If we need to boot EmuNAND, make sure it exists
+    /*
     if(nandType != FIRMWARE_SYSNAND)
     {
         locateEmuNand(&nandType);
@@ -383,6 +395,7 @@ boot:
     //Same if we're using EmuNAND as the FIRM source
     else if(firmSource != FIRMWARE_SYSNAND)
         locateEmuNand(&firmSource);
+    */
 
     if(bootType != FIRMLAUNCH)
     {
